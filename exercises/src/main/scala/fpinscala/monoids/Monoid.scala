@@ -1,5 +1,6 @@
 package fpinscala.monoids
 
+import org.scalacheck._
 import fpinscala.parallelism.Nonblocking._
 import fpinscala.parallelism.Nonblocking.Par.toParOps // infix syntax for `Par.map`, `Par.flatMap`, etc
 
@@ -54,13 +55,11 @@ object Monoid {
 
   // TODO: Placeholder for `Prop`. Remove once you have implemented the `Prop`
   // data type from Part 2.
-  trait Prop {}
 
   // TODO: Placeholder for `Gen`. Remove once you have implemented the `Gen`
   // data type from Part 2.
 
   import fpinscala.testing._
-  import Prop._
   def monoidLaws[A](m: Monoid[A], gen: Gen[A]): Prop = sys.error("todo")
 
   def trimMonoid(s: String): Monoid[String] = sys.error("todo")
