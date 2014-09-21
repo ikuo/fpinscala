@@ -45,7 +45,12 @@ object Monoid {
     val zero = None
   }
 
-  def endoMonoid[A]: Monoid[A => A] = sys.error("todo")
+  def endoMonoid[A]: Monoid[A => A] = new Monoid[A => A] {
+    def op(f1: A => A, f2: A => A): A => A = {
+      a => f1.andThen(f2)(a)
+    }
+    val zero: A => A = { a => a }
+  }
 
   // TODO: Placeholder for `Prop`. Remove once you have implemented the `Prop`
   // data type from Part 2.
