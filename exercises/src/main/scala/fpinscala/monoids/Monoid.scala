@@ -53,8 +53,14 @@ object Monoid {
     val zero: A => A = { a => a }
   }
 
-  import fpinscala.testing._
-  def monoidLaws[A](m: Monoid[A], gen: Gen[A]): Prop = sys.error("todo")
+  import Prop.forAll
+  def monoidLaws[A](m: Monoid[A], gen: Gen[A]): Prop =
+    forAll(gen, gen, gen) { (a1, a2, a3) =>
+      m.op(a1, m.op(a2, a3)) == m.op(m.op(a1, a2), a3)
+    } &&
+    forAll(gen) { (a) =>
+      m.op(a, m.zero) == a && m.op(m.zero, a) == a
+    }
 
   def trimMonoid(s: String): Monoid[String] = sys.error("todo")
 
