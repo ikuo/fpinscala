@@ -68,7 +68,7 @@ object Monoid {
     sys.error("todo")
 
   def foldMap[A, B](as: List[A], m: Monoid[B])(f: A => B): B =
-    sys.error("todo")
+    as.foldLeft(m.zero)((b, a) => m.op(b, f(a)))
 
   def foldRight[A, B](as: List[A])(z: B)(f: (A, B) => B): B =
     sys.error("todo")
@@ -77,7 +77,7 @@ object Monoid {
     sys.error("todo")
 
   def foldMapV[A, B](as: IndexedSeq[A], m: Monoid[B])(f: A => B): B =
-    sys.error("todo")
+    as.foldLeft(m.zero)((b, a) => m.op(b, f(a)))
 
   def ordered(ints: IndexedSeq[Int]): Boolean =
     sys.error("todo")
@@ -92,7 +92,7 @@ object Monoid {
   def parFoldMap[A,B](v: IndexedSeq[A], m: Monoid[B])(f: A => B): Par[B] = 
     sys.error("todo") 
 
-  val wcMonoid: Monoid[WC] = sys.error("todo")
+  lazy val wcMonoid: Monoid[WC] = sys.error("todo")
 
   def count(s: String): Int = sys.error("todo")
 
