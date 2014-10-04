@@ -5,10 +5,7 @@ object FPInScalaBuild extends Build {
   val opts = Project.defaultSettings ++ Seq(
     scalaVersion := "2.10.4",
     resolvers += "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/",
-    resolvers += "Sonatype Releases" at "http://oss.sonatype.org/content/repositories/releases",
-    libraryDependencies ++= Seq(
-      "org.scalacheck" %% "scalacheck" % "1.11.5"
-    )
+    resolvers ++= Seq("snapshots", "releases").map(Resolver.sonatypeRepo)
   )
 
   lazy val root =
@@ -24,7 +21,13 @@ object FPInScalaBuild extends Build {
   lazy val exercises =
     Project(id = "exercises",
             base = file("exercises"),
-            settings = opts)
+            settings = opts ++ Seq(
+              scalacOptions in Test ++= Seq("-Yrangepos"),
+              libraryDependencies ++= Seq(
+                "org.scalacheck" %% "scalacheck" % "1.11.5",
+                "org.specs2" %% "specs2" % "2.4.1" % "test"
+              )
+            ))
   lazy val answers =
     Project(id = "answers",
             base = file("answers"),
