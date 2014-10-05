@@ -71,4 +71,29 @@ class FoldableSpec extends Specification {
       }
     }
   }
+
+  "TreeFoldable" >> {
+    import TreeFoldable._
+
+    "foldMap" should {
+      "return folded value" in {
+        val result: Int = foldMap(Leaf("aa"))(_.size)(intAddition)
+        result must be_== (2)
+      }
+    }
+
+    "foldLeft" should {
+      "return folded value" in {
+        val result: Int = foldLeft(Leaf("aa"))(100)((i, s) => s.size + i)
+        result must be_== (102)
+      }
+    }
+
+    "foldRight" should {
+      "return folded value" in {
+        val result: Int = foldRight(Leaf("aa"))(100)((s, i) => s.size + i)
+        result must be_== (102)
+      }
+    }
+  }
 }
