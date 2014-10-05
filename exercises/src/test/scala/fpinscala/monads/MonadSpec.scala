@@ -26,4 +26,14 @@ class MonadSpec extends Specification {
       }
     }
   }
+
+  "sequence" should {
+    import parallelism._
+    import parallelism.Par._
+
+    "return monad of a list" in new DefaultExecutor {
+      val seq = parMonad.sequence(List(Par.unit(10), Par.unit(20)))
+      seq(es).get must be_== (List(10, 20))
+    }
+  }
 }
