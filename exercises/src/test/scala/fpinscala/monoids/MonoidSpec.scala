@@ -30,21 +30,31 @@ class MonoidSpec extends Specification {
     }
   }
 
-  "Stub#numWords" should {
-    "be 1 when valid word" in {
-      Stub("abc").numWords must be_== (1)
+  "WordCount (WC)" >> {
+    "Stub#numWords" should {
+      "be 1 when valid word" in {
+        Stub("abc").numWords must be_== (1)
+      }
+      "be 0 when invalid word" in {
+        Stub(" ").numWords must be_== (0)
+      }
     }
-    "be 0 when invalid word" in {
-      Stub(" ").numWords must be_== (0)
+
+    "Part#numWords" should {
+      "be sum up left and right stubs with mid words" in {
+        Part("", 3, "").numWords must be_== (3)
+        Part("abc", 3, "").numWords must be_== (4)
+        Part("", 3, "def").numWords must be_== (4)
+        Part("abc", 3, "def").numWords must be_== (5)
+      }
     }
   }
 
-  "Part#numWords" should {
-    "be sum up left and right stubs with mid words" in {
-      Part("", 3, "").numWords must be_== (3)
-      Part("abc", 3, "").numWords must be_== (4)
-      Part("", 3, "def").numWords must be_== (4)
-      Part("abc", 3, "def").numWords must be_== (5)
+  "productMonoid" should {
+    "return tupled monoid" in {
+      val pm = productMonoid(intAddition, stringMonoid)
+      pm.zero must === (0, "")
+      pm.op((3, "aa"), (5, "bb")) must === (8, "aabb")
     }
   }
 }

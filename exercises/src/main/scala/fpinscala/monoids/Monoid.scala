@@ -150,7 +150,10 @@ object Monoid {
   }
 
   def productMonoid[A,B](A: Monoid[A], B: Monoid[B]): Monoid[(A, B)] =
-    sys.error("todo")
+    new Monoid[(A, B)] {
+      def op(t1: (A, B), t2: (A, B)) = (A.op(t1._1, t2._1), B.op(t1._2, t2._2))
+      val zero = (A.zero, B.zero)
+    }
 
   def functionMonoid[A,B](B: Monoid[B]): Monoid[A => B] =
     sys.error("todo")
