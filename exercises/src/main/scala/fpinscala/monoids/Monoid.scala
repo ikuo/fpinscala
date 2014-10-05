@@ -102,7 +102,24 @@ object Monoid {
   def parFoldMap[A,B](v: IndexedSeq[A], m: Monoid[B])(f: A => B): Par[B] = 
     sys.error("todo") 
 
-  lazy val wcMonoid: Monoid[WC] = sys.error("todo")
+  lazy val wcMonoid: Monoid[WC] = new Monoid[WC] {
+    override def op(x1: WC, x2: WC): WC = (x1, x2) match {
+      case (Stub(str1), Stub(str2)) => Part("", numCenterWords(str1, str2), "")
+      case (Stub(str1), Part(lStub2, words2, rStub2)) =>
+        Part("", words2 + numCenterWords(str1, lStub2), rStub2)
+      case (Part(lStub1, words1, rStub1), Stub(str2)) =>
+        Part(lStub1, words1 + numCenterWords(rStub1, str2), "")
+      case (Part(lStub1, words1, rStub1), Part(lStub2, words2, rStub2)) => {
+        Part(lStub1, words1 + words2 + numCenterWords(rStub1, lStub2), rStub2)
+      }
+    }
+
+    override val zero = Stub("")
+
+    private def numCenterWords(str1: String, str2: String): Int =
+      if (str1.endsWith(" ") || str2.startsWith(" ")) 2
+      else 1
+  }
 
   def count(s: String): Int = sys.error("todo")
 
