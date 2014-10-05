@@ -75,7 +75,11 @@ object Monad {
       ma.flatMap(a => f(a))
   }
 
-  //val streamMonad: Monad[Stream] = ???
+  val streamMonad: Monad[Stream] = new Monad[Stream] {
+    def unit[A](a: => A): Stream[A] = Stream(a)
+    def flatMap[A,B](ma: Stream[A])(f: A => Stream[B]): Stream[B] =
+      ma.flatMap(a => f(a))
+  }
 
   //val listMonad: Monad[List] = ???
 
