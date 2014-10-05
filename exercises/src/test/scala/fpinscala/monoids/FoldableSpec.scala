@@ -95,6 +95,13 @@ class FoldableSpec extends Specification {
         result must be_== (102)
       }
     }
+
+    "toList" should {
+      "return a List" in {
+        val r: List[String] = toList(Branch(Leaf("a"), Branch(Leaf("b"), Leaf("c"))))
+        r must containTheSameElementsAs (List[String]("a", "b", "c"))
+      }
+    }
   }
 
   "OptionFoldable" >> {
