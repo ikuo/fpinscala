@@ -26,7 +26,8 @@ object FPInScalaBuild extends Build {
               libraryDependencies ++= Seq(
                 "org.scalacheck" %% "scalacheck" % "1.11.5",
                 "org.specs2" %% "specs2" % "2.4.1" % "test"
-              )
+              ),
+              testOptions in Test += Tests.Argument(TestFrameworks.ScalaCheck, "-verbosity", "1")
             ))
   lazy val answers =
     Project(id = "answers",
