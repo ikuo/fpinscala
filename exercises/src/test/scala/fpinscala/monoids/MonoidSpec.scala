@@ -57,4 +57,11 @@ class MonoidSpec extends Specification {
       pm.op((3, "aa"), (5, "bb")) must === (8, "aabb")
     }
   }
+
+  "bag" should {
+    "count map elements" in {
+      val map: Map[String, Int] = bag(Vector("a", "rose", "is", "a", "rose"))
+      map must be_== (Map("a" -> 2, "rose" -> 2, "is" -> 1))
+    }
+  }
 }

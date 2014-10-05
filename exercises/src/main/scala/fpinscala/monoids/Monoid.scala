@@ -160,11 +160,20 @@ object Monoid {
     val zero = (a: A) => B.zero
   }
 
-  def mapMergeMonoid[K,V](V: Monoid[V]): Monoid[Map[K, V]] =
-    sys.error("todo")
+  def mapMergeMonoid[K,V](V: Monoid[V]): Monoid[Map[K, V]] = new Monoid[Map[K, V]] {
+    val zero = Map[K, V]()
+    def op(a: Map[K, V], b: Map[K, V]) =
+      (a.keySet ++ b.keySet).foldLeft(zero) { (results, key) =>
+        results.updated(key, V.op(valueOf(a, key), valueOf(b, key)))
+      }
+
+    private def valueOf(map: Map[K, V], key: K) = map.getOrElse(key, V.zero)
+  }
 
   def bag[A](as: IndexedSeq[A]): Map[A, Int] =
-    sys.error("todo")
+    foldMapV(as, mapMergeMonoid(intAddition): Monoid[Map[A, Int]])(
+      (a: A) => Map[A, Int](a -> 1)
+    )
 }
 
 trait Foldable[F[_]] {
