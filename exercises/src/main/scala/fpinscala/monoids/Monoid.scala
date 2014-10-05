@@ -77,7 +77,17 @@ object Monoid {
     sys.error("todo")
 
   def foldMapV[A, B](as: IndexedSeq[A], m: Monoid[B])(f: A => B): B =
-    as.foldLeft(m.zero)((b, a) => m.op(b, f(a)))
+    as.size match {
+      case 0 => m.zero
+      case 1 => m.op(m.zero, f(as(0)))
+      case i => {
+        val pivot: Int = i / 2
+        m.op(
+          foldMapV(as.slice(0, pivot), m)(f),
+          foldMapV(as.slice(pivot, as.size), m)(f)
+        )
+      }
+    }
 
   def ordered(ints: IndexedSeq[Int]): Boolean =
     sys.error("todo")
