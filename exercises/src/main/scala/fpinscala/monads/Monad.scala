@@ -6,6 +6,7 @@ import testing._
 import parallelism._
 import state._
 import parallelism.Par._
+import java.util.concurrent.ExecutorService
 
 trait Functor[F[_]] {
   def map[A,B](fa: F[A])(f: A => B): F[B]
@@ -60,21 +61,25 @@ object Monad {
       ma flatMap f
   }
 
-  val parMonad: Monad[Par] = ???
+  val parMonad: Monad[Par] = new Monad[Par] {
+    def unit[A](a: => A): Par[A] = Par.unit(a)
+    def flatMap[A,B](ma: Par[A])(f: A => Par[B]): Par[B] =
+      (es: ExecutorService) => f(ma(es).get)(es)
+  }
 
-  def parserMonad[P[+_]](p: Parsers[P]): Monad[P] = ???
+  //def parserMonad[P[+_]](p: Parsers[P]): Monad[P] = ???
 
-  val optionMonad: Monad[Option] = ???
+  //val optionMonad: Monad[Option] = ???
 
-  val streamMonad: Monad[Stream] = ???
+  //val streamMonad: Monad[Stream] = ???
 
-  val listMonad: Monad[List] = ???
+  //val listMonad: Monad[List] = ???
 
-  def stateMonad[S] = ???
+  //def stateMonad[S] = ???
 
-  val idMonad: Monad[Id] = ???
+  //val idMonad: Monad[Id] = ???
 
-  def readerMonad[R] = ???
+  //def readerMonad[R] = ???
 }
 
 case class Id[A](value: A) {
