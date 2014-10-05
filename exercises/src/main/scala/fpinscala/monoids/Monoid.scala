@@ -79,7 +79,7 @@ object Monoid {
   def foldMapV[A, B](as: IndexedSeq[A], m: Monoid[B])(f: A => B): B =
     as.size match {
       case 0 => m.zero
-      case 1 => m.op(m.zero, f(as(0)))
+      case 1 => f(as(0))
       case i => {
         val pivot: Int = i / 2
         m.op(
@@ -92,9 +92,22 @@ object Monoid {
   def ordered(ints: IndexedSeq[Int]): Boolean =
     sys.error("todo")
 
-  sealed trait WC
-  case class Stub(chars: String) extends WC
-  case class Part(lStub: String, words: Int, rStub: String) extends WC
+  sealed trait WC {
+    def numWords: Int
+    protected def isValidWord(word: String): Boolean =
+      word.size > 0 && word.forall(_ != ' ')
+  }
+  case class Stub(chars: String) extends WC {
+    def numWords = if (isValidWord(chars)) 1 else 0
+  }
+  case class Part(lStub: String, words: Int, rStub: String) extends WC {
+    def numWords = {
+      var results = words
+      if (isValidWord(lStub)) { results += 1 }
+      if (isValidWord(rStub)) { results += 1 }
+      results
+    }
+  }
 
   def par[A](m: Monoid[A]): Monoid[Par[A]] = 
     sys.error("todo")
@@ -105,10 +118,13 @@ object Monoid {
   lazy val wcMonoid: Monoid[WC] = new Monoid[WC] {
     override def op(x1: WC, x2: WC): WC = (x1, x2) match {
       case (Stub(str1), Stub(str2)) => Part("", numCenterWords(str1, str2), "")
+
       case (Stub(str1), Part(lStub2, words2, rStub2)) =>
         Part("", words2 + numCenterWords(str1, lStub2), rStub2)
+
       case (Part(lStub1, words1, rStub1), Stub(str2)) =>
         Part(lStub1, words1 + numCenterWords(rStub1, str2), "")
+
       case (Part(lStub1, words1, rStub1), Part(lStub2, words2, rStub2)) => {
         Part(lStub1, words1 + words2 + numCenterWords(rStub1, lStub2), rStub2)
       }
@@ -121,7 +137,17 @@ object Monoid {
       else 1
   }
 
-  def count(s: String): Int = sys.error("todo")
+  def count(s: String): Int = {
+    val wc = foldMapV(s.grouped(7).toIndexedSeq, wcMonoid) { str: String =>
+      val words = str.split(" ")
+      words.size match {
+        case 0 => wcMonoid.zero
+        case 1 => Stub(words(0))
+        case i => Part(words(0), i - 2, words.last)
+      }
+    }
+    wc.numWords
+  }
 
   def productMonoid[A,B](A: Monoid[A], B: Monoid[B]): Monoid[(A, B)] =
     sys.error("todo")
