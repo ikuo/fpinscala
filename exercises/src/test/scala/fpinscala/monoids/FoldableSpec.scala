@@ -96,4 +96,27 @@ class FoldableSpec extends Specification {
       }
     }
   }
+
+  "OptionFoldable" >> {
+    import OptionFoldable._
+
+    "foldMap" should {
+      "return folded value" in {
+        foldMap(Some("aa"))(_.size)(intAddition) must be_== (2)
+      }
+    }
+
+    "foldLeft" should {
+      "return folded value" in {
+        foldLeft(Some("aa"))(100)((i, str) => i + str.size) must be_== (102)
+      }
+    }
+
+    "foldRight" should {
+      "return folded value" in {
+        val r: Int = foldRight(Some("aa"))(100)((str, i) => i + str.size)
+        r must be_== (102)
+      }
+    }
+  }
 }
