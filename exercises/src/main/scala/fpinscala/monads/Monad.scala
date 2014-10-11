@@ -54,7 +54,8 @@ trait Monad[M[_]] extends Functor[M] {
     flatMap(mma)(ma => flatMap(ma)(a => unit(a)))
 
   // Implement in terms of `join`:
-  def __flatMap[A,B](ma: M[A])(f: A => M[B]): M[B] = ???
+  def __flatMap[A,B](ma: M[A])(f: A => M[B]): M[B] =
+    flatMap(ma)(f(_))
 }
 
 case class Reader[R, A](run: R => A)
